@@ -1,0 +1,85 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap");
+@import "tailwindcss";
+
+:root {
+  --navy: #0D1B2A;
+  --moss: #081A0E;
+  --gold: #C9A447;
+  --gold-dim: rgba(201, 164, 71, 0.15);
+  --gold-border: rgba(201, 164, 71, 0.25);
+  --cream: #E8E0D0;
+  --cream-dim: rgba(232, 224, 208, 0.6);
+  --card-bg: rgba(13, 27, 42, 0.75);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(145deg, var(--navy) 0%, var(--moss) 100%);
+  min-height: 100vh;
+  color: var(--cream);
+}
+
+/* Cormorant Garamond — elegant serif for headings (matches bibliotech site) */
+.font-playfair {
+  font-family: "Cormorant Garamond", "Times New Roman", serif;
+}
+
+/* Cinzel — decorative caps for logo wordmark and labels */
+.font-cinzel {
+  font-family: "Cinzel", "Times New Roman", serif;
+}
+
+.btn-gold {
+  background: var(--gold);
+  color: #0D1B2A;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  letter-spacing: 0.03em;
+}
+.btn-gold:hover:not(:disabled) {
+  background: #d9b55a;
+  box-shadow: 0 0 20px rgba(201, 164, 71, 0.45);
+}
+.btn-gold:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.glass-card {
+  background: var(--card-bg);
+  border: 1px solid var(--gold-border);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+}
+
+.field {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--gold-border);
+  border-radius: 8px;
+  padding: 10px 16px;
+  color: var(--cream);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: "Inter", sans-serif;
+}
+.field::placeholder {
+  color: rgba(232, 224, 208, 0.3);
+}
+.field:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 164, 71, 0.15);
+}
+
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.4;
+  margin: 1.5rem 0;
+}

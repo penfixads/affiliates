@@ -39,7 +39,7 @@ export default function DashboardShell({ affiliate, affiliatePrograms, clickCoun
       <header className="border-b px-6 py-4 flex items-center justify-between sticky top-0 z-10"
         style={{ borderColor: "var(--gold-border)", background: "rgba(13,27,42,0.97)", backdropFilter: "blur(12px)" }}>
         <div>
-          <span className="font-cinzel text-lg font-semibold tracking-widest" style={{ color: "var(--gold)" }}>BrilliantLabs</span>
+          <span className="font-cinzel text-lg font-semibold tracking-widest" style={{ color: "var(--gold)" }}>BrilliantLabsPh</span>
           <span className="ml-3 text-xs tracking-widest uppercase" style={{ color: "var(--cream-dim)" }}>Affiliate Portal</span>
         </div>
         <div className="flex items-center gap-5">

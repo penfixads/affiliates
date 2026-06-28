@@ -36,7 +36,7 @@ export default function ReaderShell({
       >
         <div>
           <span className="font-cinzel text-lg font-semibold tracking-widest" style={{ color: "var(--gold)" }}>
-            BrilliantLabs
+            BrilliantLabsPh
           </span>
           <span className="ml-3 text-xs tracking-widest uppercase" style={{ color: "var(--cream-dim)" }}>
             Affiliate Reader

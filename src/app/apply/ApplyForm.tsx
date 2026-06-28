@@ -51,7 +51,7 @@ export default function ApplyForm({ programs }: { programs: Program[] }) {
           </h1>
           <div className="gold-divider" />
           <p style={{ color: "var(--cream-dim)" }} className="leading-relaxed">
-            Thank you for applying to the BrilliantLabs Affiliate Program. We'll review your
+            Thank you for applying to the BrilliantLabsPh Affiliate Program. We'll review your
             application and reach out within 2–3 business days.
           </p>
         </div>
@@ -65,7 +65,7 @@ export default function ApplyForm({ programs }: { programs: Program[] }) {
         {/* Logo */}
         <div className="text-center mb-10">
           <div className="font-cinzel text-3xl font-semibold tracking-[0.2em]" style={{ color: "var(--gold)" }}>
-            BrilliantLabs
+            BrilliantLabsPh
           </div>
           <div className="font-cinzel text-xs tracking-[0.25em] uppercase mt-1" style={{ color: "var(--cream-dim)" }}>
             Affiliate Program
@@ -240,7 +240,7 @@ export default function ApplyForm({ programs }: { programs: Program[] }) {
                 <Link href="/terms" className="underline underline-offset-2" style={{ color: "var(--gold)" }}>
                   Terms & Conditions
                 </Link>{" "}
-                of the BrilliantLabs Affiliate Program, including the content access and non-distribution agreement.
+                of the BrilliantLabsPh Affiliate Program, including the content access and non-distribution agreement.
               </span>
             </label>
 

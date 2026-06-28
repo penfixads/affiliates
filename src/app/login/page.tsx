@@ -27,7 +27,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-10">
           <div className="font-cinzel text-3xl font-semibold tracking-[0.2em]" style={{ color: "var(--gold)" }}>
-            BrilliantLabs
+            BrilliantLabsPh
           </div>
           <div className="font-cinzel text-xs tracking-[0.25em] uppercase mt-1" style={{ color: "var(--cream-dim)" }}>
             Affiliate Portal

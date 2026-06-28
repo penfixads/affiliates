@@ -36,6 +36,12 @@ export default function AdminDashboard({ applications, programs, affiliates, sal
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
+  // Pagination state
+  const [appPage, setAppPage] = useState(1);
+  const [appPerPage, setAppPerPage] = useState(10);
+  const [affPage, setAffPage] = useState(1);
+  const [affPerPage, setAffPerPage] = useState(10);
+
   function flash(msg: string) {
     setMessage(msg);
     setTimeout(() => setMessage(null), 3000);
@@ -109,7 +115,52 @@ export default function AdminDashboard({ applications, programs, affiliates, sal
   const pendingSales = saleList.filter((s) => s.status === "pending");
   const totalPending = pendingSales.reduce((sum, s) => sum + s.commission, 0);
 
+  // Paginated slices
+  const appTotalPages = Math.max(1, Math.ceil(apps.length / appPerPage));
+  const pagedApps = apps.slice((appPage - 1) * appPerPage, appPage * appPerPage);
+  const affTotalPages = Math.max(1, Math.ceil(affiliates.length / affPerPage));
+  const pagedAffs = affiliates.slice((affPage - 1) * affPerPage, affPage * affPerPage);
+
   const BASE_URL = typeof window !== "undefined" ? window.location.origin : "https://affiliates.brilliantlabsph.com";
+
+  function Pagination({ page, totalPages, perPage, onPage, onPerPage }: {
+    page: number; totalPages: number; perPage: number;
+    onPage: (p: number) => void; onPerPage: (n: number) => void;
+  }) {
+    return (
+      <div className="flex items-center justify-between mt-5 text-sm flex-wrap gap-3">
+        <div className="flex items-center gap-2" style={{ color: "var(--cream-dim)" }}>
+          <span className="text-xs tracking-widest uppercase">Per page</span>
+          {[10, 20, 50].map((n) => (
+            <button key={n} onClick={() => { onPerPage(n); onPage(1); }}
+              className="px-2.5 py-1 rounded text-xs font-medium transition-all"
+              style={{
+                background: perPage === n ? "var(--gold)" : "transparent",
+                color: perPage === n ? "#0D1B2A" : "var(--cream-dim)",
+                border: `1px solid ${perPage === n ? "var(--gold)" : "var(--gold-border)"}`,
+              }}>
+              {n}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-1">
+          <button onClick={() => onPage(page - 1)} disabled={page === 1}
+            className="px-3 py-1 rounded text-xs border transition-all disabled:opacity-30"
+            style={{ borderColor: "var(--gold-border)", color: "var(--cream-dim)" }}>
+            ← Prev
+          </button>
+          <span className="px-3 text-xs" style={{ color: "var(--cream-dim)" }}>
+            {page} / {totalPages}
+          </span>
+          <button onClick={() => onPage(page + 1)} disabled={page === totalPages}
+            className="px-3 py-1 rounded text-xs border transition-all disabled:opacity-30"
+            style={{ borderColor: "var(--gold-border)", color: "var(--cream-dim)" }}>
+            Next →
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
@@ -117,7 +168,7 @@ export default function AdminDashboard({ applications, programs, affiliates, sal
       <header className="border-b px-6 py-4 flex items-center justify-between sticky top-0 z-10"
         style={{ borderColor: "var(--gold-border)", background: "rgba(13,27,42,0.97)", backdropFilter: "blur(12px)" }}>
         <div className="flex items-center gap-3">
-          <span className="font-cinzel text-lg font-semibold tracking-widest" style={{ color: "var(--gold)" }}>BrilliantLabs</span>
+          <span className="font-cinzel text-lg font-semibold tracking-widest" style={{ color: "var(--gold)" }}>BrilliantLabsPh</span>
           <span className="text-xs tracking-widest uppercase" style={{ color: "var(--cream-dim)" }}>Admin</span>
         </div>
         <form action={logout}>
@@ -161,7 +212,8 @@ export default function AdminDashboard({ applications, programs, affiliates, sal
           <div className="space-y-3">
             <h2 className="font-playfair text-2xl mb-6" style={{ color: "var(--gold)" }}>Applications</h2>
             {apps.length === 0 && <div className="glass-card p-16 text-center" style={{ color: "var(--cream-dim)" }}>No applications yet.</div>}
-            {apps.map((app) => (
+            {apps.length > 0 && <Pagination page={appPage} totalPages={appTotalPages} perPage={appPerPage} onPage={setAppPage} onPerPage={setAppPerPage} />}
+            {pagedApps.map((app) => (
               <div key={app.id} className="glass-card overflow-hidden">
                 <div className="flex items-center gap-4 px-6 py-4 cursor-pointer"
                   onClick={() => setExpanded(expanded === app.id ? null : app.id)}>
@@ -249,6 +301,7 @@ export default function AdminDashboard({ applications, programs, affiliates, sal
                 )}
               </div>
             ))}
+            {apps.length > 0 && <Pagination page={appPage} totalPages={appTotalPages} perPage={appPerPage} onPage={setAppPage} onPerPage={setAppPerPage} />}
           </div>
         )}
 
@@ -257,8 +310,9 @@ export default function AdminDashboard({ applications, programs, affiliates, sal
           <div>
             <h2 className="font-playfair text-2xl mb-6" style={{ color: "var(--gold)" }}>All Affiliates</h2>
             {affiliates.length === 0 && <div className="glass-card p-16 text-center" style={{ color: "var(--cream-dim)" }}>No approved affiliates yet.</div>}
+            {affiliates.length > 0 && <Pagination page={affPage} totalPages={affTotalPages} perPage={affPerPage} onPage={setAffPage} onPerPage={setAffPerPage} />}
             <div className="space-y-3">
-              {affiliates.map((aff) => {
+              {pagedAffs.map((aff) => {
                 const totalClicks = aff.affiliate_programs.reduce((sum, ap) => sum + (clickCounts[ap.referral_code] ?? 0), 0);
                 const affSales = saleList.filter((s) => s.affiliate_id === aff.id);
                 const totalComm = affSales.reduce((sum, s) => sum + s.commission, 0);
@@ -317,6 +371,7 @@ export default function AdminDashboard({ applications, programs, affiliates, sal
                 );
               })}
             </div>
+            {affiliates.length > 0 && <Pagination page={affPage} totalPages={affTotalPages} perPage={affPerPage} onPage={setAffPage} onPerPage={setAffPerPage} />}
           </div>
         )}
 

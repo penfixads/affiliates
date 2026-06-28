@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "BrilliantLabs Affiliates",
-  description: "Affiliate reader portal for BrilliantLabs",
+  title: "BrilliantLabsPh Affiliates",
+  description: "Affiliate reader portal for BrilliantLabsPh",
 };
 
 export default function RootLayout({

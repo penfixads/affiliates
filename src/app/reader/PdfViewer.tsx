@@ -189,7 +189,7 @@ function WatermarkOverlay({ text }: { text: string }) {
         className="absolute bottom-3 right-3 text-right leading-tight"
         style={{ fontSize: "9px", color: "#C9A447", opacity: 0.6, fontFamily: "monospace" }}
       >
-        {text}<br />BrilliantLabs Affiliate Copy
+        {text}<br />BrilliantLabsPh Affiliate Copy
       </div>
     </div>
   );

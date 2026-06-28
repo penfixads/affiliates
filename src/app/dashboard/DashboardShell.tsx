@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { logout } from "@/app/actions/auth";
 import Link from "next/link";
 
@@ -16,8 +16,11 @@ export default function DashboardShell({ affiliate, affiliatePrograms, clickCoun
   sales: Sale[];
 }) {
   const [copied, setCopied] = useState<string | null>(null);
+  const [BASE_URL, setBaseUrl] = useState("https://affiliates.brilliantlabsph.com");
 
-  const BASE_URL = typeof window !== "undefined" ? window.location.origin : "https://affiliates.brilliantlabsph.com";
+  useEffect(() => {
+    setBaseUrl(window.location.origin);
+  }, []);
 
   function copyLink(code: string) {
     navigator.clipboard.writeText(`${BASE_URL}/ref/${code}`);

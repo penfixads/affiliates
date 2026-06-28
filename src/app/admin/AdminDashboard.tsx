@@ -355,7 +355,14 @@ export default function AdminDashboard({ applications, programs, affiliates, sal
 
                     {expanded === aff.id && (
                       <div className="px-6 pb-6 border-t space-y-3" style={{ borderColor: "var(--gold-border)" }}>
-                        <div className="pt-5 text-xs tracking-widest uppercase mb-3" style={{ color: "var(--cream-dim)" }}>Referral Links</div>
+                        <div className="pt-5 flex items-center justify-between mb-3">
+                          <span className="text-xs tracking-widest uppercase" style={{ color: "var(--cream-dim)" }}>Referral Links</span>
+                          <a href={`/admin/preview/${aff.id}`} target="_blank" rel="noopener noreferrer"
+                            className="text-xs px-3 py-1.5 rounded-lg transition-all"
+                            style={{ background: "var(--gold-dim)", color: "var(--gold)", border: "1px solid var(--gold-border)" }}>
+                            👁 View Dashboard
+                          </a>
+                        </div>
                         {aff.affiliate_programs.map((ap) => (
                           <div key={ap.id} className="rounded-lg px-4 py-3 flex items-center justify-between gap-4"
                             style={{ border: "1px solid var(--gold-border)", background: "rgba(255,255,255,0.02)" }}>

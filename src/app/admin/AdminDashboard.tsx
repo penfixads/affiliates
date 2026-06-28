@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { approveProgram, rejectProgram, addProgram, markSalesPaid, deleteApplication } from "@/app/actions/admin";
+import { approveProgram, rejectProgram, addProgram, markSalesPaid, deleteApplication, deactivateProgram } from "@/app/actions/admin";
 import { logout } from "@/app/actions/auth";
 
 type Program = { id: string; name: string; slug: string; type: string; commission_rate: number; product_url: string; active: boolean };
@@ -35,6 +35,10 @@ export default function AdminDashboard({ applications, programs, affiliates, sal
   const [selectedSales, setSelectedSales] = useState<string[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  // Deactivation state
+  const [deactivating, setDeactivating] = useState<string | null>(null);
+  const [deactivationDate, setDeactivationDate] = useState("");
 
   // Pagination state
   const [appPage, setAppPage] = useState(1);
@@ -83,6 +87,22 @@ export default function AdminDashboard({ applications, programs, affiliates, sal
       setApps((prev) => prev.filter((a) => a.id !== appId));
       setExpanded(null);
       flash("Application deleted.");
+    });
+  }
+
+  function handleDeactivate(progId: string) {
+    setDeactivating(progId);
+    setDeactivationDate("");
+  }
+
+  function handleDeactivateConfirm(progId: string) {
+    if (!deactivationDate) return;
+    startTransition(async () => {
+      const res = await deactivateProgram(progId, deactivationDate);
+      if (res?.error) { flash(`Error: ${res.error}`); return; }
+      setProgs((prev) => prev.map((p) => p.id === progId ? { ...p, active: false } : p));
+      setDeactivating(null);
+      flash(`Program deactivated. Emails sent to ${res.emailsSent} affiliate(s).${res.emailsFailed ? ` (${res.emailsFailed} failed)` : ""}`);
     });
   }
 
@@ -393,19 +413,63 @@ export default function AdminDashboard({ applications, programs, affiliates, sal
             <h2 className="font-playfair text-2xl mb-6" style={{ color: "var(--gold)" }}>Programs</h2>
             <div className="grid gap-4 mb-10">
               {progs.map((p) => (
-                <div key={p.id} className="glass-card px-6 py-4 flex items-center gap-4">
-                  <div className="flex-1">
-                    <div className="font-medium" style={{ color: "var(--cream)" }}>{p.name}</div>
-                    <div className="text-xs mt-0.5" style={{ color: "var(--cream-dim)" }}>
-                      /{p.slug} · {p.type} · {p.commission_rate}% commission
+                <div key={p.id} className="glass-card px-6 py-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1">
+                      <div className="font-medium" style={{ color: "var(--cream)" }}>{p.name}</div>
+                      <div className="text-xs mt-0.5" style={{ color: "var(--cream-dim)" }}>
+                        /{p.slug} · {p.type} · {p.commission_rate}% commission
+                      </div>
+                      {p.product_url && p.product_url !== "#" && (
+                        <div className="text-xs mt-1 font-mono" style={{ color: "rgba(201,164,71,0.6)" }}>{p.product_url}</div>
+                      )}
                     </div>
-                    {p.product_url && p.product_url !== "#" && (
-                      <div className="text-xs mt-1 font-mono" style={{ color: "rgba(201,164,71,0.6)" }}>{p.product_url}</div>
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${p.active ? STATUS_PILL.approved : STATUS_PILL.rejected}`}>
+                      {p.active ? "Active" : "Inactive"}
+                    </span>
+                    {p.active && (
+                      <button onClick={() => handleDeactivate(p.id)} disabled={isPending}
+                        className="text-xs px-3 py-1.5 rounded-lg border transition-all disabled:opacity-50"
+                        style={{ borderColor: "rgba(220,38,38,0.35)", color: "#fca5a5" }}>
+                        Deactivate
+                      </button>
                     )}
                   </div>
-                  <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${p.active ? STATUS_PILL.approved : STATUS_PILL.rejected}`}>
-                    {p.active ? "Active" : "Inactive"}
-                  </span>
+
+                  {/* Deactivation date picker */}
+                  {deactivating === p.id && (
+                    <div className="mt-4 pt-4 border-t flex flex-wrap items-end gap-3" style={{ borderColor: "var(--gold-border)" }}>
+                      <div>
+                        <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: "var(--cream-dim)" }}>
+                          Deactivation Date
+                        </label>
+                        <input
+                          type="date"
+                          value={deactivationDate}
+                          min={new Date().toISOString().split("T")[0]}
+                          onChange={(e) => setDeactivationDate(e.target.value)}
+                          className="field text-sm"
+                          style={{ width: "180px" }}
+                        />
+                      </div>
+                      <p className="text-xs flex-1" style={{ color: "var(--cream-dim)" }}>
+                        Affiliates enrolled in <strong style={{ color: "var(--cream)" }}>{p.name}</strong> will receive an email notice about this deactivation date.
+                      </p>
+                      <div className="flex gap-2">
+                        <button onClick={() => setDeactivating(null)}
+                          className="text-xs px-3 py-1.5 rounded-lg border transition-all"
+                          style={{ borderColor: "var(--gold-border)", color: "var(--cream-dim)" }}>
+                          Cancel
+                        </button>
+                        <button onClick={() => handleDeactivateConfirm(p.id)}
+                          disabled={!deactivationDate || isPending}
+                          className="text-xs px-3 py-1.5 rounded-lg transition-all disabled:opacity-40"
+                          style={{ background: "rgba(220,38,38,0.2)", color: "#fca5a5", border: "1px solid rgba(220,38,38,0.35)" }}>
+                          {isPending ? "Sending…" : "Confirm & Notify Affiliates"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
